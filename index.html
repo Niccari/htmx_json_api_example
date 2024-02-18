@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+  <script src="scripts/htmx.min.js" defer></script>
+  <script src="scripts/client-side-templates.js" defer></script>
+  <script src="scripts/nunjucks.min.js" defer></script>
+
+  <script id="api-list-parser" type="nunjucks">
+    {% for person in results %}
+    <section>
+      <img src="{{ person.picture.thumbnail }}" />
+      <h2> {{ person.name.first }} {{ person.name.title }} {{ person.name.last}} </h2>
+      <ul>
+        <li>gender: {{ person.gender }}</li>
+        <li>nation: {{ person.nat }}</li>
+        <li>email: {{ person.email }}</li>
+        <li>phone: {{ person.phone }}</li>
+        <li>location:  {{ person.location.country }} {{ person.location.state }} {{ person.location.city }} {{ person.location.street.name }} {{ person.location.street.number }}</li>
+        <li>coordinate: ({{ person.location.coordinates.latitude }}, {{ person.location.coordinates.longitude }})</li>
+        <li>timezone: {{ person.location.timezone.description }}</li>
+      </ul>
+    </section>
+    {% endfor %}
+  </script>
+</head>
+<body>
+  <main hx-ext="client-side-templates">
+    <h1>
+      htmx json API example
+    </h1>
+    <div>
+      <button class="posts-reload"
+        hx-trigger="load, click"
+        hx-get="https://randomuser.me/api/"
+        hx-target="#api-list"
+        nunjucks-template="api-list-parser"
+        hx-indicator="#api-indicator"
+        hx-swap="innerHTML"
+      >
+        Reload
+      </button>
+      <span id="api-indicator" class="htmx-indicator">loading...</span>
+    </div>
+
+    <div id="api-list"></div>
+    <footer>
+      The API is provided by <a href="https://randomuser.me">Random User Generator API</a>.
+    </footer>
+  </main>
+</body>
